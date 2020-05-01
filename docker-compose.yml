@@ -1,0 +1,30 @@
+version: '3'
+services:
+  db:
+    image: mysql:8.0.3
+    restart: always
+    expose:
+      - 3306
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+      MYSQL_USER: "birthday"
+      MYSQL_PASSWORD: "AFSNabhjfhauisfbuiabsfjinAJISF"
+      MYSQL_DATABASE: "birthday"
+    volumes:
+    - "birthday_bot_db:/var/lib/mysql"
+  bot:
+    build: .
+    restart: always
+    tty: yes
+    depends_on:
+      - db
+    environment:
+      DB_HOST: "db"
+      DB_PORT: 3306
+      DB_USER: "birthday"
+      DB_PASSWORD: "AFSNabhjfhauisfbuiabsfjinAJISF"
+      DB_DB: "birthday"
+      BOT_PREFIX: "BI!"
+      BOT_TOKEN: ""
+volumes:
+  birthday_bot_db:
