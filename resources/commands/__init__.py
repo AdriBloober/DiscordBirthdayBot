@@ -22,6 +22,7 @@ async def help(ctx):
     helps.append(f"{config.BOT_PREFIX}my_birthday_is 'Day-Month' : Set your birthday")
     helps.append(f"{config.BOT_PREFIX}when_is_my_birthday : Shows your birthday")
     helps.append(f"{config.BOT_PREFIX}when_is_his_birthday <@he> : Shows hist birthday")
+    helps.append(f"{config.BOT_PREFIX}forget_my_birthday : Shows hist birthday")
     if is_user_admin_permitted(ctx.author):
         helps.append(
             f"{config.BOT_PREFIX}set_notification_channel '#channel' : Set the notification channel. The bot "
