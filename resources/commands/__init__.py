@@ -1,11 +1,11 @@
-from discord import TextChannel
+from discord import TextChannel, Member
 from sqlalchemy.orm.exc import NoResultFound
 
 from resources import bot
 from resources.commands.converters import BirthdayConverter
 from resources.config import config
-from resources.domain_logic.permissions import is_user_admin_permitted
-from resources.dtos.user import get_user, initialize_user, update_birthday
+from resources.domain_logic.permissions import is_bot_owner, is_user_admin_permitted
+from resources.dtos.user import get_user, initialize_user, update_birthday, User
 from resources.dtos.server import get_server, update_notification_channel
 
 
@@ -14,6 +14,8 @@ async def help(ctx):
     helps = []
     helps.append(f"{config.BOT_PREFIX}help : Shows this help")
     helps.append(f"{config.BOT_PREFIX}my_birthday_is 'Day-Month' : Set your birthday")
+    helps.append(f"{config.BOT_PREFIX}when_is_my_birthday : Shows your birthday")
+    helps.append(f"{config.BOT_PREFIX}when_is_his_birthday <@he> : Shows hist birthday")
     if is_user_admin_permitted(ctx.author):
         helps.append(
             f"{config.BOT_PREFIX}set_notification_channel '#channel' : Set the notification channel. The bot "
@@ -39,6 +41,21 @@ async def my_birthday_is(ctx, birthday: BirthdayConverter):
 
 
 @bot.command()
+async def his_birthday_is(ctx, member: Member, birthday: BirthdayConverter):
+    if not is_bot_owner(ctx.author):
+        await ctx.send(
+            "NOOO, you can set your own birthday, but not the birthday of others!"
+        )
+        return
+    try:
+        update_birthday(get_user(member), str(birthday))
+        await ctx.send("I have set his birthday :D")
+    except NoResultFound:
+        initialize_user(member, str(birthday))
+        await ctx.send("Hello, i see he is new here! I have set his birthday ^^")
+
+
+@bot.command()
 async def set_notification_channel(ctx, channel: TextChannel):
     if not is_user_admin_permitted(ctx.author):
         await ctx.send("You don't have the administrator permission!")
@@ -50,7 +67,33 @@ async def set_notification_channel(ctx, channel: TextChannel):
         return
     member = ctx.guild.get_member(bot.user.id)
     if not member.permissions_in(channel):
-        await ctx.send(f"I have no permissions to write in the channel {channel.mention} :c")
+        await ctx.send(
+            f"I have no permissions to write in the channel {channel.mention} :c"
+        )
         return
     update_notification_channel(get_server(ctx.guild), channel)
     await ctx.send("I have set the new notification channel.")
+
+
+@bot.command()
+async def when_is_my_birthday(ctx):
+    try:
+        user = get_user(ctx.author)
+        if user.birthday is not None:
+            await ctx.send(f"Your birthday is {user.birthday} ^^")
+        else:
+            await ctx.send(f"I dont know")
+    except NoResultFound:
+        await ctx.send(f"I dont know")
+
+
+@bot.command()
+async def when_is_his_birthday(ctx, member: Member):
+    try:
+        user = get_user(member)
+        if user.birthday is not None:
+            await ctx.send(f"His birthday is {user.birthday} ^^")
+        else:
+            await ctx.send(f"I dont know")
+    except NoResultFound:
+        await ctx.send(f"I dont know")
