@@ -93,5 +93,7 @@ async def on_message(message: Message):
         or message.content.startswith(f"<@!{bot.user.id}>")
     ):
         await message.channel.send(
-            f"Ehhhmm... you can use commands with my prefix: {config.BOT_PREFIX}. For example {config.BOT_PREFIX}HELP"
+            f"Ehhhmm... you can use commands with my prefix: {config.BOT_PREFIX}. For example {config.BOT_PREFIX}help"
         )
+    else:
+        await bot.process_commands(message)

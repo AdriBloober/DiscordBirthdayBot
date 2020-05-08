@@ -50,7 +50,9 @@ async def set_notification_channel(ctx, channel: TextChannel):
         return
     member = ctx.guild.get_member(bot.user.id)
     if not member.permissions_in(channel):
-        await ctx.send(f"I have no permissions to write in the channel {channel.mention} :c")
+        await ctx.send(
+            f"I have no permissions to write in the channel {channel.mention} :c"
+        )
         return
     update_notification_channel(get_server(ctx.guild), channel)
     await ctx.send("I have set the new notification channel.")
