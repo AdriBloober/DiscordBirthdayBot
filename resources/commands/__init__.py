@@ -14,6 +14,8 @@ async def help(ctx):
     helps = []
     helps.append(f"{config.BOT_PREFIX}help : Shows this help")
     helps.append(f"{config.BOT_PREFIX}my_birthday_is 'Day-Month' : Set your birthday")
+    helps.append(f"{config.BOT_PREFIX}when_is_my_birthday : Shows your birthday")
+    helps.append(f"{config.BOT_PREFIX}when_is_his_birthday <@he> : Shows hist birthday")
     if is_user_admin_permitted(ctx.author):
         helps.append(
             f"{config.BOT_PREFIX}set_notification_channel '#channel' : Set the notification channel. The bot "
@@ -71,3 +73,27 @@ async def set_notification_channel(ctx, channel: TextChannel):
         return
     update_notification_channel(get_server(ctx.guild), channel)
     await ctx.send("I have set the new notification channel.")
+
+
+@bot.command()
+async def when_is_my_birthday(ctx):
+    try:
+        user = get_user(ctx.author)
+        if user.birthday is not None:
+            await ctx.send(f"Your birthday is {user.birthday} ^^")
+        else:
+            await ctx.send(f"I dont know")
+    except NoResultFound:
+        await ctx.send(f"I dont know")
+
+
+@bot.command()
+async def when_is_his_birthday(ctx, member: Member):
+    try:
+        user = get_user(member)
+        if user.birthday is not None:
+            await ctx.send(f"His birthday is {user.birthday} ^^")
+        else:
+            await ctx.send(f"I dont know")
+    except NoResultFound:
+        await ctx.send(f"I dont know")
