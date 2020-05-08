@@ -126,6 +126,6 @@ async def forget_his_birthday(ctx, member: Member):
     try:
         user = get_user(member)
         remove_user(user)
-        await ctx.send("Ok i dont know who you are!")
+        await ctx.send("Ok i dont know who he are!")
     except NoResultFound:
-        await ctx.send(f"I didnt know your birthday.")
+        await ctx.send(f"I didnt know his birthday.")
