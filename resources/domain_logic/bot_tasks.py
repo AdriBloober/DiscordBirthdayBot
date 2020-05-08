@@ -2,7 +2,7 @@ import asyncio
 from datetime import datetime
 
 import discord
-from discord import Guild, Message
+from discord import Guild, Message, Forbidden
 
 from resources import bot
 from resources.config import config
@@ -35,12 +35,21 @@ async def birthday_task():
                         server = get_server(guild)
                         if not server.notification_channel_id is None:
                             print(f"{member} birthday")
-                            await bot.get_channel(
-                                int(server.notification_channel_id)
-                            ).send(
-                                f"{member.mention}: Today is your birthday! Happy Birthday from me ^^"
-                            )
-                            update_last_birthday(user, str(year))
+                            try:
+                                await bot.get_channel(
+                                    int(server.notification_channel_id)
+                                ).send(
+                                    f"{member.mention}: Today is your birthday! Happy Birthday from me ^^"
+                                )
+                                update_last_birthday(user, str(year))
+                            except Forbidden:
+                                owner: discord.User = guild.owner
+                                dm = await owner.create_dm()
+                                await dm.send(
+                                    "Hello, i have no rights to write in any channel. So i will tell it you here: "
+                                    + "I have no permissions to write in the notification channel. Please fix it!"
+                                )
+
         await asyncio.sleep(60 * 60 * 4)
 
 
