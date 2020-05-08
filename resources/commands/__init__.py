@@ -1,11 +1,11 @@
-from discord import TextChannel
+from discord import TextChannel, Member
 from sqlalchemy.orm.exc import NoResultFound
 
 from resources import bot
 from resources.commands.converters import BirthdayConverter
 from resources.config import config
-from resources.domain_logic.permissions import is_user_admin_permitted
-from resources.dtos.user import get_user, initialize_user, update_birthday
+from resources.domain_logic.permissions import is_bot_owner, is_user_admin_permitted
+from resources.dtos.user import get_user, initialize_user, update_birthday, User
 from resources.dtos.server import get_server, update_notification_channel
 
 
@@ -36,6 +36,21 @@ async def my_birthday_is(ctx, birthday: BirthdayConverter):
     except NoResultFound:
         initialize_user(ctx.author, str(birthday))
         await ctx.send("Hello, i see you are new! I have set your birthday ^^")
+
+
+@bot.command()
+async def his_birthday_is(ctx, member: Member, birthday: BirthdayConverter):
+    if not is_bot_owner(ctx.author):
+        await ctx.send(
+            "NOOO, you can set your own birthday, but not the birthday of others!"
+        )
+        return
+    try:
+        update_birthday(get_user(member), str(birthday))
+        await ctx.send("I have set his birthday :D")
+    except NoResultFound:
+        initialize_user(member, str(birthday))
+        await ctx.send("Hello, i see he is new here! I have set his birthday ^^")
 
 
 @bot.command()
