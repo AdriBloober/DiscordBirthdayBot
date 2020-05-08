@@ -5,7 +5,13 @@ from resources import bot
 from resources.commands.converters import BirthdayConverter
 from resources.config import config
 from resources.domain_logic.permissions import is_bot_owner, is_user_admin_permitted
-from resources.dtos.user import get_user, initialize_user, update_birthday, User
+from resources.dtos.user import (
+    get_user,
+    initialize_user,
+    update_birthday,
+    User,
+    remove_user,
+)
 from resources.dtos.server import get_server, update_notification_channel
 
 
@@ -97,3 +103,28 @@ async def when_is_his_birthday(ctx, member: Member):
             await ctx.send(f"I dont know")
     except NoResultFound:
         await ctx.send(f"I dont know")
+
+
+@bot.command()
+async def forget_my_birthday(ctx):
+    try:
+        user = get_user(ctx.author)
+        remove_user(user)
+        await ctx.send("Ok i dont know who you are!")
+    except NoResultFound:
+        await ctx.send(f"I didnt know your birthday.")
+
+
+@bot.command()
+async def forget_his_birthday(ctx, member: Member):
+    if not is_bot_owner(ctx.author):
+        await ctx.send(
+            "NOOO, you can delete your own birthday, but not the birthday of others!"
+        )
+        return
+    try:
+        user = get_user(member)
+        remove_user(user)
+        await ctx.send("Ok i dont know who you are!")
+    except NoResultFound:
+        await ctx.send(f"I didnt know your birthday.")
