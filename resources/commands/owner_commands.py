@@ -29,7 +29,7 @@ class OwnerCommands(commands.Cog):
 
         msgs = [[]]
         for g in guilds:
-            if len(msgs[len(msgs) - 1]) > 35:
+            if len(msgs[len(msgs) - 1]) > 20:
                 msgs.append([])
             msgs[len(msgs) - 1].append(g)
         for msg in msgs:
