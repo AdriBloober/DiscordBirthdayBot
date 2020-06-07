@@ -21,12 +21,19 @@ class OwnerCommands(commands.Cog):
         for g in bot.guilds:
             s = f"{g.name} -> {g.owner}"
             if enable_joined_at:
-                s += f" -> {g.get_member(bot.user.id).joined_at.isoformat()}"
+                s += f" -> {g.get_member(bot.user.id).joined_at.isocalendar()}"
             guilds.append(s)
         guilds.append("---")
         guilds.append(f"Users: {count_users()}")
 
-        await ctx.send("```" + "\n".join(guilds) + "```")
+
+        msgs = [[]]
+        for g in guilds:
+            if len(msgs[len(msgs) - 1]) > 35:
+                msgs.append([])
+            msgs[len(msgs) - 1].append(g)
+        for msg in msgs:
+            await ctx.send("```" + "\n".join(msg) + "```")
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
