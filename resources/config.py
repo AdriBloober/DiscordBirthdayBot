@@ -20,6 +20,8 @@ class Config:
     BOT_TOKEN = EMPTY_ATTRIBUTE
     BOT_PREFIX = "Bi!"
 
+    ADMIN_WEBHOOK_URL = ""
+
 
 config = Config()
 

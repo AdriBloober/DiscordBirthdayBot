@@ -3,13 +3,13 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from resources import bot
 from resources.commands.converters import BirthdayConverter
+from resources.commands.owner_commands import OwnerCommands
 from resources.config import config
 from resources.domain_logic.permissions import is_bot_owner, is_user_admin_permitted
 from resources.dtos.user import (
     get_user,
     initialize_user,
     update_birthday,
-    User,
     remove_user,
 )
 from resources.dtos.server import get_server, update_notification_channel
@@ -129,3 +129,5 @@ async def forget_his_birthday(ctx, member: Member):
         await ctx.send("Ok i dont know who he are!")
     except NoResultFound:
         await ctx.send(f"I didnt know his birthday.")
+
+bot.add_cog(OwnerCommands())
