@@ -18,7 +18,7 @@ class Config:
     DB_DB = EMPTY_ATTRIBUTE
 
     BOT_TOKEN = EMPTY_ATTRIBUTE
-    BOT_PREFIX = "BI!"
+    BOT_PREFIX = "Bi!"
 
 
 config = Config()
