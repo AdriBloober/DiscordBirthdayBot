@@ -5,6 +5,7 @@ from discord.ext import commands
 from resources import bot
 from resources.config import config
 from resources.domain_logic.permissions import is_bot_owner
+from resources.dtos.user import count_users
 
 
 class OwnerCommands(commands.Cog):
@@ -22,6 +23,8 @@ class OwnerCommands(commands.Cog):
             if enable_joined_at:
                 s += f" -> {g.get_member(bot.user.id).joined_at.isoformat()}"
             guilds.append(s)
+        guilds.append("---")
+        guilds.append(f"Users: {count_users()}")
 
         await ctx.send("```" + "\n".join(guilds) + "```")
 

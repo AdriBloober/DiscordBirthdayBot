@@ -7,7 +7,7 @@ from discord import Guild, Message, Forbidden
 from resources import bot
 from resources.config import config
 from resources.commands.converters import Birthday
-from resources.dtos.user import get_all_users_where_birthday, update_last_birthday, User
+from resources.dtos.user import get_all_users_where_birthday, update_last_birthday, User, count_users
 from resources.dtos.server import get_server, initialize_server, remove_server
 
 
@@ -15,7 +15,7 @@ async def server_status_update_task():
     while True:
         await bot.change_presence(
             status=discord.Status.online,
-            activity=discord.Game(name=f"Active on {str(len(bot.guilds))} servers"),
+            activity=discord.Game(name=f"Active on {str(len(bot.guilds))} servers with {count_users()} users."),
         )
         await asyncio.sleep(60 * 5)  # wait 5 Minutes
 

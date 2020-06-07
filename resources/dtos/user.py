@@ -48,3 +48,7 @@ def get_all_users_where_birthday(birthday):
         return database.session.query(User).filter(User.birthday == birthday).all()
     except NoResultFound:
         return []
+
+
+def count_users() -> int:
+    return database.session.query(User).count()
