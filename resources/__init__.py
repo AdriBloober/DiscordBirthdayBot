@@ -1,9 +1,31 @@
+from itertools import product
+
 from resources.drivers.database import database
 from resources.config import config
 import discord.ext.commands
 
 
-bot = discord.ext.commands.Bot(command_prefix=config.BOT_PREFIX, help_command=None)
+def get_command_prefix(_, __):
+    prefix = config.BOT_PREFIX
+    return set(
+        [
+            "".join(
+                [
+                    prefix[i].lower() if cases[i] else prefix[i].upper()
+                    for i in range(len(cases))
+                ]
+            )
+            for cases in product([True, False], repeat=len(prefix))
+        ]
+    )
+
+
+bot = discord.ext.commands.Bot(
+    command_prefix=get_command_prefix,
+    help_command=None,
+    case_insensitive=False,
+    owner_id=330148908531580928,
+)
 
 from resources.dtos import server, user
 from resources import commands

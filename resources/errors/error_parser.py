@@ -4,7 +4,6 @@ from resources.config import config
 
 
 async def parse_error(error, channel):
-    print("A")
     if isinstance(error, MissingRequiredArgument) or isinstance(error, BadArgument):
         await channel.send(
             f"The syntax of the command is invalid. Type in ``{config.BOT_PREFIX}help`` to show the help"
