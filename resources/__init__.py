@@ -28,6 +28,7 @@ bot = discord.ext.commands.Bot(
 )
 
 from resources import commands
+from resources.commands import calender_view
 from resources.errors import errors_event
 from resources.domain_logic import bot_tasks
 
