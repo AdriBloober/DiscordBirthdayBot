@@ -1,6 +1,9 @@
-from sqlalchemy import Column, Integer, String, Date
+from datetime import datetime
+
+from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm.exc import NoResultFound
 
+from resources.commands.converters import Birthday
 from resources.drivers.database import database
 
 
@@ -52,3 +55,48 @@ def get_all_users_where_birthday(birthday):
 
 def count_users() -> int:
     return database.session.query(User).count()
+
+
+def get_all_users():
+    try:
+        return database.session.query(User).all()
+    except NoResultFound:
+        return []
+
+
+def get_last_birthday(users):
+    last_birthday: Birthday = None
+    last_birthday_users = []
+    now = datetime.now()
+    for user in users:
+        b = Birthday.from_string(user.birthday)
+        if user.last_birthday == str(now.year) and b.to_date(now.year) < now:
+            if last_birthday is None or last_birthday.to_date(now.year) < b.to_date(
+                now.year
+            ):
+                last_birthday = b
+                last_birthday_users.clear()
+                last_birthday_users.append(user)
+            elif last_birthday == b:
+                last_birthday_users.append(user)
+    return last_birthday, last_birthday_users
+
+
+def get_next_birthday(users):
+    next_birthday: Birthday = None
+    next_birthday_users = []
+    now = datetime.now()
+    for user in users:
+        b = Birthday.from_string(user.birthday)
+        if (user.last_birthday is None or user.last_birthday != str(now.year)) and b.to_date(
+            now.year
+        ) > now:
+            if next_birthday is None or next_birthday.to_date(now.year) > b.to_date(
+                now.year
+            ):
+                next_birthday = b
+                next_birthday_users.clear()
+                next_birthday_users.append(user)
+            elif next_birthday == b:
+                next_birthday_users.append(user)
+    return next_birthday, next_birthday_users

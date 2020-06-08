@@ -2,6 +2,7 @@ from discord import TextChannel, Member
 from sqlalchemy.orm.exc import NoResultFound
 
 from resources import bot
+from resources.commands.birthday_calender import BirthdayCalendar
 from resources.commands.converters import BirthdayConverter
 from resources.commands.owner_commands import OwnerCommands
 from resources.config import config
@@ -18,11 +19,15 @@ from resources.dtos.server import get_server, update_notification_channel
 @bot.command()
 async def help(ctx):
     helps = []
-    helps.append(f"{config.BOT_PREFIX}help : Shows this help")
-    helps.append(f"{config.BOT_PREFIX}my_birthday_is 'Day-Month' : Set your birthday")
-    helps.append(f"{config.BOT_PREFIX}when_is_my_birthday : Shows your birthday")
-    helps.append(f"{config.BOT_PREFIX}when_is_his_birthday <@he> : Shows hist birthday")
-    helps.append(f"{config.BOT_PREFIX}forget_my_birthday : Forget your birthday")
+    helps.append(f"{config.BOT_PREFIX}help : Shows this help.")
+    helps.append(f"{config.BOT_PREFIX}my_birthday_is 'Day-Month' : Set your birthday.")
+    helps.append(f"{config.BOT_PREFIX}when_is_my_birthday : Shows your birthday.")
+    helps.append(f"{config.BOT_PREFIX}when_is_his_birthday <@he> : Shows hist birthday.")
+    helps.append(f"{config.BOT_PREFIX}forget_my_birthday : Forget your birthday.")
+    helps.append(f"{config.BOT_PREFIX}who_has_today_birthday [global] : Shows users, that have today birthday. If you "
+                 f"add 'global' after the command, you will see global birthdays for today.")
+    helps.append(f"{config.BOT_PREFIX}who_has_last_birthday : Shows the last birthday on the server.")
+    helps.append(f"{config.BOT_PREFIX}who_has_next_birthday : Shows the next birthday on the server.")
     if is_user_admin_permitted(ctx.author):
         helps.append(
             f"{config.BOT_PREFIX}set_notification_channel '#channel' : Set the notification channel. The bot "
@@ -131,3 +136,4 @@ async def forget_his_birthday(ctx, member: Member):
         await ctx.send(f"I didnt know his birthday.")
 
 bot.add_cog(OwnerCommands())
+bot.add_cog(BirthdayCalendar())

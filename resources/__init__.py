@@ -27,7 +27,6 @@ bot = discord.ext.commands.Bot(
     owner_id=330148908531580928,
 )
 
-from resources.dtos import server, user
 from resources import commands
 from resources.errors import errors_event
 from resources.domain_logic import bot_tasks
