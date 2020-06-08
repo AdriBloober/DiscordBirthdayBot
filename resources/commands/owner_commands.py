@@ -43,6 +43,20 @@ class OwnerCommands(commands.Cog):
                     config.ADMIN_WEBHOOK_URL, adapter=AsyncWebhookAdapter(session)
                 )
                 await webhook.send(
-                    f"The server {guild.name} by {guild.owner} is now using this bot. {len(bot.guilds)} guilds are using the bot.",
+                    f"The server {guild.name} by {guild.owner} is now using this bot. {len(bot.guilds)} guilds are "
+                    f"using the bot.",
+                    username="DiscordBirthdayBot",
+                )
+
+    @commands.Cog.listener()
+    async def on_guild_remove(self, guild):
+        if config.ADMIN_WEBHOOK_URL not in ["", " ", None]:
+            async with aiohttp.ClientSession() as session:
+                webhook = Webhook.from_url(
+                    config.ADMIN_WEBHOOK_URL, adapter=AsyncWebhookAdapter(session)
+                )
+                await webhook.send(
+                    f"The server {guild.name} by {guild.owner} has removed the bot :C. {len(bot.guilds)} guilds are "
+                    f"using the bot.",
                     username="DiscordBirthdayBot",
                 )
