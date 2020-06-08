@@ -5,6 +5,7 @@ from discord import Guild, Message, Embed, Member, Reaction, Forbidden
 
 from resources import bot
 from resources.commands.converters import Birthday
+from resources.domain_logic.permissions import is_bot_owner
 from resources.dtos.user import get_all_users_where_birthday, User
 
 
@@ -16,15 +17,18 @@ def is_int_parsable(value):
         return False
 
 
-def generate_embed(guild, month):
+def generate_embed(guild, month, g=False):
     embed1 = Embed(title=f"Calender view for month {month}. 1/2")
     embed2 = Embed(title=f"Calender view for month {month}. 2/2")
     for d in range(1, 32):
         users = get_all_users_where_birthday(Birthday(d, month).__str__())
         new_users = []
-        for user in users:
-            if guild.get_member(int(user.user_id)) is not None:
-                new_users.append(user)
+        if not g:
+            for user in users:
+                if guild.get_member(int(user.user_id)) is not None:
+                    new_users.append(user)
+        else:
+            new_users = users
         v = ", ".join([bot.get_user(int(user.user_id)).mention for user in new_users])
         if v == "":
             v = "-"
@@ -36,16 +40,17 @@ def generate_embed(guild, month):
 
 
 class CalenderView:
-    def __init__(self, guild: Guild, message: Message, first_message: Message, orginal_message, author: Member, month: int):
+    def __init__(self, guild: Guild, message: Message, first_message: Message, orginal_message, author: Member, month: int, g=False):
         self.guild = guild
         self.message = message
         self.second_message = first_message
         self.orginal_message = orginal_message
         self.author = author
         self.month = month
+        self.g = g
 
     async def regenerate_embed(self):
-        e1, e2 = generate_embed(self.guild, self.month)
+        e1, e2 = generate_embed(self.guild, self.month, self.g)
         await self.second_message.edit(embed=e1)
         await self.message.edit(embed=e2)
 
@@ -55,19 +60,22 @@ calender_views: List[CalenderView] = []
 
 @bot.command(aliases=["c", "view_calender", "birthdays"])
 async def calender(ctx, *args):
+    g = False
     if len(args) > 0 and is_int_parsable(args[0]):
         month = int(args[0])
     else:
+        if len(args) > 0 and is_bot_owner(ctx.message.author) and args[0].lower() in ("global", "g"):
+            g = True
         month = datetime.now().month
 
-    e1, e2 = generate_embed(ctx.guild, month)
+    e1, e2 = generate_embed(ctx.guild, month, g)
     first_message = await ctx.send(embed=e1)
     message = await ctx.send(embed=e2)
     await message.add_reaction("◀️")
     await message.add_reaction(b"\xf0\x9f\x97\x91\xef\xb8\x8f".decode())
     await message.add_reaction("▶️")
 
-    view = CalenderView(ctx.guild, message, first_message, ctx.message, ctx.message.author, month)
+    view = CalenderView(ctx.guild, message, first_message, ctx.message, ctx.message.author, month, g)
     calender_views.append(view)
 
 
