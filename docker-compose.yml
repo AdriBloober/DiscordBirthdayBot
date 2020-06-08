@@ -24,7 +24,7 @@ services:
       DB_USER: "birthday"
       DB_PASSWORD: "AFSNabhjfhauisfbuiabsfjinAJISF"
       DB_DB: "birthday"
-      BOT_PREFIX: "BI!"
+      BOT_PREFIX: "Bi!"
       BOT_TOKEN: ""
 volumes:
   birthday_bot_db:

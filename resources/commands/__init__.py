@@ -22,12 +22,24 @@ async def help(ctx):
     helps.append(f"{config.BOT_PREFIX}help : Shows this help.")
     helps.append(f"{config.BOT_PREFIX}my_birthday_is 'Day-Month' : Set your birthday.")
     helps.append(f"{config.BOT_PREFIX}when_is_my_birthday : Shows your birthday.")
-    helps.append(f"{config.BOT_PREFIX}when_is_his_birthday <@he> : Shows hist birthday.")
+    helps.append(
+        f"{config.BOT_PREFIX}when_is_his_birthday <@he> : Shows hist birthday."
+    )
     helps.append(f"{config.BOT_PREFIX}forget_my_birthday : Forget your birthday.")
-    helps.append(f"{config.BOT_PREFIX}who_has_today_birthday [global] : Shows users, that have today birthday. If you "
-                 f"add 'global' after the command, you will see global birthdays for today.")
-    helps.append(f"{config.BOT_PREFIX}who_has_last_birthday : Shows the last birthday on the server.")
-    helps.append(f"{config.BOT_PREFIX}who_has_next_birthday : Shows the next birthday on the server.")
+    helps.append(
+        f"{config.BOT_PREFIX}who_has_today_birthday [global] : Shows users, that have today birthday. If you "
+        f"add 'global' after the command, you will see global birthdays for today."
+    )
+    helps.append(
+        f"{config.BOT_PREFIX}who_has_last_birthday : Shows the last birthday on the server."
+    )
+    helps.append(
+        f"{config.BOT_PREFIX}who_has_next_birthday : Shows the next birthday on the server."
+    )
+    helps.append(
+        f"{config.BOT_PREFIX}birthdays [Month] : Shows a calender of birthdays. If the month is not set, i will use "
+        f"the current month. "
+    )
     if is_user_admin_permitted(ctx.author):
         helps.append(
             f"{config.BOT_PREFIX}set_notification_channel '#channel' : Set the notification channel. The bot "
@@ -134,6 +146,7 @@ async def forget_his_birthday(ctx, member: Member):
         await ctx.send("Ok i dont know who he are!")
     except NoResultFound:
         await ctx.send(f"I didnt know his birthday.")
+
 
 bot.add_cog(OwnerCommands())
 bot.add_cog(BirthdayCalendar())
