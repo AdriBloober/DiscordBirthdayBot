@@ -11,28 +11,8 @@ class Birthday:
     def from_datetime(date: datetime):
         return Birthday(date.day, date.month)
 
-    def __init__(self, day: int, month: int):
-        try:
-            assert day <= 31
-            assert month <= 12
-        except AssertionError:
-            raise InvalidBirthday()
-        self.day = day
-        self.month = month
-
-    def __str__(self):
-        day = str(self.day)
-        month = str(self.month)
-        if len(day) == 1:
-            day = "0" + day
-        if len(month) == 1:
-            month = "0" + month
-
-        return f"{day}-{month}"
-
-
-class BirthdayConverter(Converter):
-    async def convert(self, ctx, argument: str):
+    @staticmethod
+    def from_string(argument: str):
         try:
             argument = argument.split("-")
             if len(argument) != 2:
@@ -64,3 +44,30 @@ class BirthdayConverter(Converter):
             return Birthday(int(day), int(month))
         except InvalidBirthday:
             raise BadArgument("The Birthday is invalid.")
+
+    def __init__(self, day: int, month: int):
+        try:
+            assert day <= 31
+            assert month <= 12
+        except AssertionError:
+            raise InvalidBirthday()
+        self.day = day
+        self.month = month
+
+    def __str__(self):
+        day = str(self.day)
+        month = str(self.month)
+        if len(day) == 1:
+            day = "0" + day
+        if len(month) == 1:
+            month = "0" + month
+
+        return f"{day}-{month}"
+
+    def to_date(self, year: int):
+        return datetime(year=year, month=self.month, day=self.day)
+
+
+class BirthdayConverter(Converter):
+    async def convert(self, ctx, argument: str):
+        return Birthday.from_string(argument)
