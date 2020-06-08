@@ -19,7 +19,7 @@ def is_int_parsable(value):
 def generate_embed(guild, month):
     embed1 = Embed(title=f"Calender view for month {month}. 1/2")
     embed2 = Embed(title=f"Calender view for month {month}. 2/2")
-    for d in range(1, 31):
+    for d in range(1, 32):
         users = get_all_users_where_birthday(Birthday(d, month).__str__())
         new_users = []
         for user in users:
