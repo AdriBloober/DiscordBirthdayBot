@@ -7,7 +7,12 @@ from discord import Guild, Message, Forbidden
 from resources import bot
 from resources.config import config
 from resources.commands.converters import Birthday
-from resources.dtos.user import get_all_users_where_birthday, update_last_birthday, User, count_users
+from resources.dtos.user import (
+    get_all_users_where_birthday,
+    update_last_birthday,
+    User,
+    count_users,
+)
 from resources.dtos.server import get_server, initialize_server, remove_server
 
 
@@ -15,7 +20,9 @@ async def server_status_update_task():
     while True:
         await bot.change_presence(
             status=discord.Status.online,
-            activity=discord.Game(name=f"Active on {str(len(bot.guilds))} servers with {count_users()} users."),
+            activity=discord.Game(
+                name=f"Active on {str(len(bot.guilds))} servers with {count_users()} users."
+            ),
         )
         await asyncio.sleep(60 * 5)  # wait 5 Minutes
 
@@ -46,8 +53,7 @@ async def birthday_task():
                                 owner: discord.User = guild.owner
                                 dm = await owner.create_dm()
                                 await dm.send(
-                                    "Hello, i have no rights to write in any channel. So i will tell it you here: "
-                                    + "I have no permissions to write in the notification channel. Please fix it!"
+                                    "Hello, i have no rights to write in the notification channel. Please fix it!"
                                 )
 
         await asyncio.sleep(60 * 60 * 4)
@@ -62,7 +68,9 @@ async def on_ready():
 
 @bot.event
 async def on_guild_join(guild: Guild):
-    message = f"Welcome and thank you for the invite. With {config.BOT_PREFIX}help i will show you the help. You can set the birthday notification channel with {config.BOT_PREFIX}set_notification_channel #channel."
+    message = f"Welcome and thank you for the invite. With {config.BOT_PREFIX}help i will show you the help. You can " \
+              f"set the birthday notification channel with {config.BOT_PREFIX}set_notification_channel #channel." \
+              f"If you don't set a notification channel, the bot will not send any birthday notification!"
     get_server(guild)
     channel = None
     member = guild.get_member(bot.user.id)
@@ -80,7 +88,8 @@ async def on_guild_join(guild: Guild):
         )
     else:
         await channel.send(
-            "I dont know, what channel i should use. Sorry, i hope this is the right channel. Here you have my default welcome text (sorry my creativity is limited): "
+            "I dont know, what channel i should use. Sorry, i hope this is the right channel. Here you have my "
+            "default welcome text (sorry my creativity is limited): "
             + message
         )
 
