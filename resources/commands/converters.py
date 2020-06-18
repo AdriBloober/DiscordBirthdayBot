@@ -14,7 +14,7 @@ class Birthday:
     @staticmethod
     def from_string(argument: str):
         try:
-            argument = argument.split("-")
+            argument = argument.replace("'", "").replace('"', "").split("-")
             if len(argument) != 2:
                 raise BadArgument()
             try:
