@@ -20,10 +20,10 @@ from resources.dtos.server import get_server, update_notification_channel
 async def help(ctx):
     helps = []
     helps.append(f"{config.BOT_PREFIX}help : Shows this help.")
-    helps.append(f"{config.BOT_PREFIX}my_birthday_is 'Day-Month' : Set your birthday.")
+    helps.append(f"{config.BOT_PREFIX}my_birthday_is Day-Month : Set your birthday.")
     helps.append(f"{config.BOT_PREFIX}when_is_my_birthday : Shows your birthday.")
     helps.append(
-        f"{config.BOT_PREFIX}when_is_his_birthday <@he> : Shows hist birthday."
+        f"{config.BOT_PREFIX}when_is_his_birthday @he : Shows hist birthday."
     )
     helps.append(f"{config.BOT_PREFIX}forget_my_birthday : Forget your birthday.")
     helps.append(
@@ -45,6 +45,7 @@ async def help(ctx):
             f"{config.BOT_PREFIX}set_notification_channel '#channel' : Set the notification channel. The bot "
             f"sends bithday notifications in this channel"
         )
+    helps.append("A [argument] means, that the argument is optional.")
     helps.append("Developed by AdriBloober#1260")
     helps.append("AdriBloober's Twitter: https://twitter.com/AdriBloober")
     message = "```"
