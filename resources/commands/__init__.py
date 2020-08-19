@@ -1,4 +1,5 @@
-from discord import TextChannel, Member
+import discord
+from discord import TextChannel, Member, User
 from sqlalchemy.orm.exc import NoResultFound
 
 from resources import bot
@@ -22,9 +23,7 @@ async def help(ctx):
     helps.append(f"{config.BOT_PREFIX}help : Shows this help.")
     helps.append(f"{config.BOT_PREFIX}my_birthday_is Day-Month : Set your birthday.")
     helps.append(f"{config.BOT_PREFIX}when_is_my_birthday : Shows your birthday.")
-    helps.append(
-        f"{config.BOT_PREFIX}when_is_his_birthday @he : Shows hist birthday."
-    )
+    helps.append(f"{config.BOT_PREFIX}when_is_his_birthday @he : Shows hist birthday.")
     helps.append(f"{config.BOT_PREFIX}forget_my_birthday : Forget your birthday.")
     helps.append(
         f"{config.BOT_PREFIX}who_has_today_birthday [global] : Shows users, that have today birthday. If you "
@@ -45,8 +44,11 @@ async def help(ctx):
             f"{config.BOT_PREFIX}set_notification_channel '#channel' : Set the notification channel. The bot "
             f"sends bithday notifications in this channel"
         )
+    helps.append("Information")
+    helps.append(f"{config.BOT_PREFIX}invite : Invite this bot to your server.")
+    helps.append(f"{config.BOT_PREFIX}github : Get the github link.")
     helps.append("A [argument] means, that the argument is optional.")
-    helps.append("Developed by AdriBloober#1260")
+    helps.append("Developed by AdriBloober#1260 (https://adribloober.wtf)")
     helps.append("AdriBloober's Twitter: https://twitter.com/AdriBloober")
     message = "```"
     for i in helps:
@@ -56,13 +58,34 @@ async def help(ctx):
 
 
 @bot.command()
+async def invite(ctx):
+    try:
+        await ctx.author.send("Invite link: " + config.INVITE_LINK)
+        await ctx.message.add_reaction("✅")
+    except discord.Forbidden:
+        await ctx.send(
+            "I cannot send you a direct message. Please enable direct messaging!"
+        )
+
+
+@bot.command()
+async def github(ctx):
+    await ctx.send(config.GITHUB_LINK)
+
+
+@bot.command()
 async def my_birthday_is(ctx, birthday: BirthdayConverter):
     try:
         update_birthday(get_user(ctx.author), str(birthday))
-        await ctx.send("I have set your birthday :D")
+        await ctx.send(
+            f"I have set your birthday! Your birthday will be shown publicly. Delete your birthday with ``{config.BOT_PREFIX}forget_my_birthday``."
+        )
     except NoResultFound:
         initialize_user(ctx.author, str(birthday))
-        await ctx.send("Hello, i see you are new! I have set your birthday ^^")
+        await ctx.send(
+            "Hello, i see you are new! I have set your birthday! Your birthday will be shown publicly. Delete your "
+            f"birthday with ``{config.BOT_PREFIX}forget_my_birthday``. "
+        )
 
 
 @bot.command()
