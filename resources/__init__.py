@@ -23,7 +23,7 @@ def get_command_prefix(_, __):
 bot = discord.ext.commands.Bot(
     command_prefix=get_command_prefix,
     help_command=None,
-    case_insensitive=False,
+    case_insensitive=True,
     owner_id=330148908531580928,
 )
 
