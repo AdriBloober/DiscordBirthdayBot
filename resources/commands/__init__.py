@@ -78,12 +78,12 @@ async def my_birthday_is(ctx, birthday: BirthdayConverter):
     try:
         update_birthday(get_user(ctx.author), str(birthday))
         await ctx.send(
-            f"I have set your birthday! Your birthday will be shown publicly. Delete your birthday with ``{config.BOT_PREFIX}forget_my_birthday``."
+            f"I have set your birthday to {birthday}! Your birthday will be shown publicly. Delete your birthday with ``{config.BOT_PREFIX}forget_my_birthday``."
         )
     except NoResultFound:
         initialize_user(ctx.author, str(birthday))
         await ctx.send(
-            "Hello, i see you are new! I have set your birthday! Your birthday will be shown publicly. Delete your "
+            f"Hello, i see you are new! I have set your birthday to {birthday}! Your birthday will be shown publicly. Delete your "
             f"birthday with ``{config.BOT_PREFIX}forget_my_birthday``. "
         )
 
