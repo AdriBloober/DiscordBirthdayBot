@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.orm.exc import NoResultFound
 
 from resources.commands.converters import Birthday
@@ -13,10 +13,14 @@ class User(database.db):
     user_id = Column(String(32), nullable=False)
     birthday = Column(String(5), nullable=False)
     last_birthday = Column(String(4), nullable=True)
+    created_at = Column(DateTime)
+    last_modified = Column(DateTime)
 
     def __init__(self, user, birthday):
         self.user_id = user.id
         self.birthday = birthday
+        self.created_at = datetime.now()
+        self.last_modified = datetime.now()
 
 
 def initialize_user(user, birthday):
@@ -38,6 +42,7 @@ def remove_user(user):
 
 def update_birthday(user, birthday):
     user.birthday = birthday
+    user.last_modified = datetime.now()
     database.session.commit()
 
 

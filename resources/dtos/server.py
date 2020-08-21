@@ -1,4 +1,6 @@
-from sqlalchemy import Column, Integer, String, Text
+from datetime import datetime
+
+from sqlalchemy import Column, Integer, String, Text, DateTime
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
 from resources.drivers.database import database
@@ -9,9 +11,13 @@ class Server(database.db):
     id = Column(Integer, nullable=False, primary_key=True)
     guild_id = Column(String(32), nullable=False)
     notification_channel_id = Column(String(32), nullable=True)
+    created_at = Column(DateTime)
+    last_modified = Column(DateTime)
 
     def __init__(self, guild):
         self.guild_id = guild.id
+        self.created_at = datetime.now()
+        self.last_modified = datetime.now()
 
 
 def initialize_server(guild):
@@ -48,4 +54,5 @@ def remove_server(guild):
 
 def update_notification_channel(server, channel):
     server.notification_channel_id = channel.id
+    server.last_modified = datetime.now()
     database.session.commit()
