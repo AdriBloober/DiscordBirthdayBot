@@ -61,7 +61,7 @@ not_set_environments = []
 for attribute in dir(config):
     if not attribute in ignore_attributes and attribute.upper() == attribute:
         replacement = environ.get(attribute, None)
-        if not replacement in [None, "", " ", EMPTY_ATTRIBUTE]:
+        if not replacement in [None, EMPTY_ATTRIBUTE]:
             setattr(config, attribute, replacement)
         elif getattr(config, attribute) is EMPTY_ATTRIBUTE:
             not_set_environments.append(attribute)

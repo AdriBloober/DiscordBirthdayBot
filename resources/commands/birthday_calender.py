@@ -18,8 +18,8 @@ def parse_global(args):
 
 
 class BirthdayCalendar(commands.Cog):
-    @commands.command()
-    async def who_has_today_birthday(self, ctx, *args):
+    @commands.command(aliases=["who_has_today_birthday"])
+    async def today(self, ctx, *args):
         g = parse_global(args)
         users = get_all_users_where_birthday(
             Birthday.from_datetime(datetime.now()).__str__()
@@ -44,8 +44,8 @@ class BirthdayCalendar(commands.Cog):
                 + "."
             )
 
-    @commands.command()
-    async def who_has_next_birthday(self, ctx):
+    @commands.command(aliases=["who_has_next_birthday"])
+    async def next(self, ctx):
         users = get_all_users()
         new_users = []
         for user in users:
@@ -64,8 +64,8 @@ class BirthdayCalendar(commands.Cog):
                 + "."
             )
 
-    @commands.command()
-    async def who_has_last_birthday(self, ctx):
+    @commands.command(aliases=["who_has_last_birthday"])
+    async def last(self, ctx):
         users = get_all_users()
         new_users = []
         for user in users:

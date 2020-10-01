@@ -1,5 +1,6 @@
 import discord
 from discord import TextChannel, Member, User
+from discord.ext.commands import BadArgument
 from sqlalchemy.orm.exc import NoResultFound
 
 from resources import bot
@@ -21,20 +22,16 @@ from resources.dtos.server import get_server, update_notification_channel
 async def help(ctx):
     helps = []
     helps.append(f"{config.BOT_PREFIX}help : Shows this help.")
-    helps.append(f"{config.BOT_PREFIX}my_birthday_is Day-Month : Set your birthday.")
-    helps.append(f"{config.BOT_PREFIX}when_is_my_birthday : Shows your birthday.")
-    helps.append(f"{config.BOT_PREFIX}when_is_his_birthday @he : Shows hist birthday.")
-    helps.append(f"{config.BOT_PREFIX}forget_my_birthday : Forget your birthday.")
+    helps.append(f"{config.BOT_PREFIX}set_birthday  Day-Month : Set your birthday.")
+    helps.append(f"{config.BOT_PREFIX}birthday : Shows your birthday.")
+    helps.append(f"{config.BOT_PREFIX}birthday @he : Shows hist birthday.")
+    helps.append(f"{config.BOT_PREFIX}birthday delete : Forget your birthday.")
     helps.append(
-        f"{config.BOT_PREFIX}who_has_today_birthday [global] : Shows users, that have today birthday. If you "
+        f"{config.BOT_PREFIX}today [global] : Shows users, that have today birthday. If you "
         f"add 'global' after the command, you will see global birthdays for today."
     )
-    helps.append(
-        f"{config.BOT_PREFIX}who_has_last_birthday : Shows the last birthday on the server."
-    )
-    helps.append(
-        f"{config.BOT_PREFIX}who_has_next_birthday : Shows the next birthday on the server."
-    )
+    helps.append(f"{config.BOT_PREFIX}last : Shows the last birthday on the server.")
+    helps.append(f"{config.BOT_PREFIX}next : Shows the next birthday on the server.")
     helps.append(
         f"{config.BOT_PREFIX}birthdays [Month] : Shows a calender of birthdays. If the month is not set, i will use "
         f"the current month. "
@@ -73,12 +70,12 @@ async def github(ctx):
     await ctx.send(config.GITHUB_LINK)
 
 
-@bot.command()
-async def my_birthday_is(ctx, birthday: BirthdayConverter):
+@bot.command(aliases=["my_birthday_is"])
+async def set_birthday(ctx, birthday: BirthdayConverter):
     try:
         update_birthday(get_user(ctx.author), str(birthday))
         await ctx.send(
-            f"I have set your birthday to {birthday}! Your birthday will be shown publicly. Delete your birthday with ``{config.BOT_PREFIX}forget_my_birthday``."
+            f"I have set your birthday to {birthday}! Your birthday will be shown publicly. Delete your birthday with ``{config.BOT_PREFIX}birthday delete``."
         )
     except NoResultFound:
         initialize_user(ctx.author, str(birthday))
@@ -86,6 +83,41 @@ async def my_birthday_is(ctx, birthday: BirthdayConverter):
             f"Hello, i see you are new! I have set your birthday to {birthday}! Your birthday will be shown publicly. Delete your "
             f"birthday with ``{config.BOT_PREFIX}forget_my_birthday``. "
         )
+
+
+@bot.command(aliases=["when_is_my_birthday", "when_is_his_birthday"])
+async def birthday(ctx, *args):
+    target_user = ctx.author
+    if len(args) == 1 and args[0].lower() in ("del", "delete", "remove", "forget"):
+        try:
+            user = get_user(ctx.author)
+            remove_user(user)
+            await ctx.send("Ok i dont know who you are!")
+        except NoResultFound:
+            await ctx.send(f"I didnt know your birthday.")
+        return
+    elif len(args) == 1:
+        try:
+            target_user_id = int(
+                args[0]
+                .replace("<", "")
+                .replace(">", "")
+                .replace("@", "")
+                .replace("!", "")
+            )
+            target_user = bot.get_user(target_user_id)
+        except ValueError:
+            raise BadArgument("Target user")
+    elif len(args) > 1:
+        raise BadArgument("Target user")
+    try:
+        user = get_user(target_user)
+        if user.birthday is not None:
+            await ctx.send(f"Your birthday is {user.birthday} ^^")
+        else:
+            await ctx.send(f"I dont know")
+    except NoResultFound:
+        await ctx.send(f"I dont know")
 
 
 @bot.command()
@@ -121,40 +153,6 @@ async def set_notification_channel(ctx, channel: TextChannel):
         return
     update_notification_channel(get_server(ctx.guild), channel)
     await ctx.send("I have set the new notification channel.")
-
-
-@bot.command()
-async def when_is_my_birthday(ctx):
-    try:
-        user = get_user(ctx.author)
-        if user.birthday is not None:
-            await ctx.send(f"Your birthday is {user.birthday} ^^")
-        else:
-            await ctx.send(f"I dont know")
-    except NoResultFound:
-        await ctx.send(f"I dont know")
-
-
-@bot.command()
-async def when_is_his_birthday(ctx, member: Member):
-    try:
-        user = get_user(member)
-        if user.birthday is not None:
-            await ctx.send(f"His birthday is {user.birthday} ^^")
-        else:
-            await ctx.send(f"I dont know")
-    except NoResultFound:
-        await ctx.send(f"I dont know")
-
-
-@bot.command()
-async def forget_my_birthday(ctx):
-    try:
-        user = get_user(ctx.author)
-        remove_user(user)
-        await ctx.send("Ok i dont know who you are!")
-    except NoResultFound:
-        await ctx.send(f"I didnt know your birthday.")
 
 
 @bot.command()
