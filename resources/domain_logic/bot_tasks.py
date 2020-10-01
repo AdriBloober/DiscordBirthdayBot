@@ -7,6 +7,7 @@ from discord import Guild, Message, Forbidden
 from resources import bot
 from resources.config import config
 from resources.commands.converters import Birthday
+from resources.dtos.stats import create_stat
 from resources.dtos.user import (
     get_all_users_where_birthday,
     update_last_birthday,
@@ -59,18 +60,27 @@ async def birthday_task():
         await asyncio.sleep(60 * 60 * 4)
 
 
+async def stats_maker():
+    while True:
+        create_stat()
+        await asyncio.sleep(60 * 5)
+
+
 @bot.event
 async def on_ready():
     bot.loop.create_task(server_status_update_task())
     bot.loop.create_task(birthday_task())
+    bot.loop.create_task(stats_maker())
     print("Beeeeeeeep... boooting was succcessfullllyy... you can use me now [OOOOKKK]")
 
 
 @bot.event
 async def on_guild_join(guild: Guild):
-    message = f"Welcome and thank you for the invite. With {config.BOT_PREFIX}help i will show you the help. You can " \
-              f"set the birthday notification channel with {config.BOT_PREFIX}set_notification_channel #channel." \
-              f"If you don't set a notification channel, the bot will not send any birthday notification!"
+    message = (
+        f"Welcome and thank you for the invite. With {config.BOT_PREFIX}help i will show you the help. You can "
+        f"set the birthday notification channel with {config.BOT_PREFIX}set_notification_channel #channel."
+        f"If you don't set a notification channel, the bot will not send any birthday notification!"
+    )
     get_server(guild)
     channel = None
     member = guild.get_member(bot.user.id)
@@ -89,8 +99,7 @@ async def on_guild_join(guild: Guild):
     else:
         await channel.send(
             "I dont know, what channel i should use. Sorry, i hope this is the right channel. Here you have my "
-            "default welcome text (sorry my creativity is limited): "
-            + message
+            "default welcome text (sorry my creativity is limited): " + message
         )
 
 
