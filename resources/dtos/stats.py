@@ -44,7 +44,7 @@ def create_stat():
     users_with_birthday = database.session.query(User).count()
     users_with_past_birthday = (
         database.session.query(User)
-        .filter(User.last_birthday == str(Birthday.from_datetime(datetime.now())))
+        .filter(User.last_birthday == str(datetime.now().year))
         .count()
     )
     database.session.add(
