@@ -17,6 +17,7 @@ class Stats(database.db):
     users = Column(Integer, nullable=False)
     users_with_birthday = Column(Integer, nullable=False)
     users_with_past_birthday = Column(Integer, nullable=False)
+    users_with_today_birthday = Column(Integer, nullable=False)
     timestamp = Column(DateTime, nullable=False)
 
     def __init__(
@@ -26,12 +27,14 @@ class Stats(database.db):
         users,
         users_with_birthday,
         users_with_past_birthday,
+        users_with_today_birthday,
     ):
         self.guilds = guilds
         self.configured_guilds = configured_guilds
         self.users = users
         self.users_with_birthday = users_with_birthday
         self.users_with_past_birthday = users_with_past_birthday
+        self.users_with_today_birthday = users_with_today_birthday
         self.timestamp = datetime.now()
 
 
@@ -47,6 +50,11 @@ def create_stat():
         .filter(User.last_birthday == str(datetime.now().year))
         .count()
     )
+    users_with_today_birthday = (
+        database.session.query(User)
+        .filter(User.birthday == str(Birthday.from_datetime(datetime.now())))
+        .count()
+    )
     database.session.add(
         Stats(
             guilds,
@@ -54,6 +62,7 @@ def create_stat():
             users,
             users_with_birthday,
             users_with_past_birthday,
+            users_with_today_birthday,
         )
     )
     database.session.commit()
