@@ -27,7 +27,6 @@ class Stats(database.db):
         users_with_birthday,
         users_with_past_birthday,
     ):
-        assert configured_guilds <= guilds
         self.guilds = guilds
         self.configured_guilds = configured_guilds
         self.users = users
