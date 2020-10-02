@@ -9,6 +9,7 @@ verify_ssl = true
 discord-py = "*"
 sqlalchemy = "*"
 pymysql = "*"
+dblpy = "*"
 
 [requires]
 python_version = "3.8"

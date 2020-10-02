@@ -21,6 +21,7 @@ class Config:
     BOT_PREFIX = "Bi!"
 
     ADMIN_WEBHOOK_URL = ""
+    DBL_TOKEN = ""
 
     INVITE_LINK = "https://discord.com/api/oauth2/authorize?client_id=705817352411021322&permissions=92224&scope=bot"
     GITHUB_LINK = "https://github.com/AdriBloober/DiscordBirthdayBot"
